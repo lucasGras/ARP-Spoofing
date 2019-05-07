@@ -11,5 +11,6 @@ int main(int ac, char **av)
 {
     params_t *params = parse(ac, av);
 
+    delete_params(params);
     return 0;
 }

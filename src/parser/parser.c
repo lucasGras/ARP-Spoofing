@@ -59,3 +59,13 @@ params_t *parse(int ac, char **av)
     }
     return params;
 }
+
+void delete_params(params_t *params)
+{
+    if (params->print_spoof_mac_addr)
+        free(params->print_spoof_mac_addr);
+    free(params->interface);
+    free(params->dest_ip);
+    free(params->source_ip);
+    free(params);
+}

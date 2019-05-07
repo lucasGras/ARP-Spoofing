@@ -36,5 +36,6 @@ typedef struct params_s {
 } params_t;
 
 params_t *parse(int ac, char **av);
+void delete_params(params_t *params);
 
 #endif //NWP_MYARPSPOOF_2018_ARP_H
