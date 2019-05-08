@@ -7,6 +7,12 @@
 
 SRC		=		src/main.c \
 				src/parser/parser.c \
+				src/arp/create.c \
+				src/arp/delete.c \
+				src/ip/retrieve_ip_addr.c \
+				src/mac/retrieve_mac_addr.c \
+				src/socket/create.c \
+				src/socket/delete.c \
 
 OBJ		=		$(SRC:.c=.o)
 
@@ -17,11 +23,11 @@ NAME	=	myARPspoof
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-		gcc $(OBJ) -o $(NAME) -lcrypto
+		gcc $(OBJ) -o $(NAME) -g3
 
 clean:
 	find -name '*.o' -delete
-	rm -f mychap
+	rm -f myARPspoof
 
 fclean:	clean
 	find -name '*.gc*' -delete
