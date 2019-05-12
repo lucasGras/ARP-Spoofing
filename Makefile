@@ -6,6 +6,7 @@
 ##
 
 SRC		=		src/main.c \
+				src/spoofing.c \
 				src/parser/parser.c \
 				src/arp/create.c \
 				src/arp/delete.c \

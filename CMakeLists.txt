@@ -8,6 +8,6 @@ add_executable(NWP_myarpspoof_2018
         include/arp.h
         Makefile
         src/main.c src/parser/parser.c src/arp/create.c
-        src/arp/delete.c src/ip/retrieve_ip_addr.c
+        src/arp/delete.c
         src/mac/retrieve_mac_addr.c src/socket/create.c
-        src/socket/delete.c)
+        src/socket/delete.c src/spoofing.c)

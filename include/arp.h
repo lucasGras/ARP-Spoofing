@@ -83,4 +83,9 @@ char *retrieve_mac_addr(char *, int);
 unsigned char *retrieve_mac_addr_from_frame(char *);
 void print_victim_mac_addr(unsigned char *);
 
+// ------------------------- Spoofing
+unsigned char *process_arp_spoofing(char *packet,
+struct sockaddr_ll *arp_sockaddr);
+
+
 #endif //NWP_MYARPSPOOF_2018_ARP_H
