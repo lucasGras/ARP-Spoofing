@@ -70,9 +70,10 @@ typedef struct arp_hdr_s {
     char        target_ip[4];
 } arp_hdr_t;
 
-arp_hdr_t *create_arp_paquet(params_t *, int);
-char *create_sendable_packets(arp_hdr_t *, struct sockaddr_ll *, params_t *);
+arp_hdr_t *create_arp_packet(params_t *, int);
+char *create_sendable_packet(arp_hdr_t *, struct sockaddr_ll *, params_t *);
 struct sockaddr_ll *create_arp_socketaddr(params_t *);
+void delete_arp_packet(arp_hdr_t *);
 
 // ----------------------- Socket
 int create_socket(void);

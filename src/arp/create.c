@@ -15,10 +15,11 @@ bool set_arp_source(params_t *params, arp_hdr_t *arp, int socket_fd)
     if (!source_mac)
         return false;
     memcpy(arp->source_mac, source_mac, MACADDR_LEN);
+    free(source_mac);
     return true;
 }
 
-arp_hdr_t *create_arp_paquet(params_t *params, int socket_fd)
+arp_hdr_t *create_arp_packet(params_t *params, int socket_fd)
 {
     arp_hdr_t *arp_hdr = malloc(sizeof(*arp_hdr));
 
@@ -48,7 +49,7 @@ struct sockaddr_ll *create_arp_socketaddr(params_t *params)
     return sock;
 }
 
-char *create_sendable_packets(arp_hdr_t *arp_hdr,
+char *create_sendable_packet(arp_hdr_t *arp_hdr,
     struct sockaddr_ll *arp_sockaddr, params_t *params)
 {
     char *packet = malloc(sizeof(char) * PACKET_LEN);
