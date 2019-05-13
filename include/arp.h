@@ -35,8 +35,9 @@ typedef struct params_s {
     char *print_spoof_mac_addr;
 } params_t;
 
-params_t *parse(int ac, char **av);
-void delete_params(params_t *params);
+params_t *parse(int, char **);
+void delete_params(params_t *);
+void dump_broadcast_arp_packet(char *);
 
 // ----------------------- ARP packets
 #include <net/if_arp.h>
