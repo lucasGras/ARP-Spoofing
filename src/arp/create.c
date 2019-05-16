@@ -11,7 +11,10 @@ bool set_arp_source(params_t *params, arp_hdr_t *arp, int socket_fd)
 {
     char *source_mac = NULL;
 
-    source_mac = retrieve_mac_addr(params->interface, socket_fd);
+    if (params->print_broadcast || params->print_spoof_mac_addr)
+        source_mac = retrieve_mac_addr_as_user(params->interface);
+    else
+        source_mac = retrieve_mac_addr_as_sudo(params->interface, socket_fd);
     if (!source_mac)
         return false;
     memcpy(arp->source_mac, source_mac, MACADDR_LEN);
@@ -52,14 +55,14 @@ struct sockaddr_ll *create_broadcast_arp_socketaddr(params_t *params)
 struct sockaddr_ll *create_spoofed_arp_socketaddr(params_t *params,
     char *vicitm_addr)
 {
-    struct sockaddr_ll *sock = malloc(sizeof(*sock));
+    struct sockaddr_ll *sock = malloc(sizeof(struct sockaddr_ll));
     int index = if_nametoindex(params->interface);
 
     sock->sll_family = AF_PACKET;
     sock->sll_protocol = htons(ETH_P_ARP);
     sock->sll_halen = MACADDR_LEN;
     sock->sll_ifindex = index;
-    memcpy(sock->sll_addr, vicitm_addr, ETHHDR_LEN);
+    memcpy(sock->sll_addr, vicitm_addr, 8);
     return sock;
 }
 

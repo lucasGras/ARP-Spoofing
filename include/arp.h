@@ -4,6 +4,7 @@
 ** File description:
 ** Created by lucasg,
 */
+
 #ifndef NWP_MYARPSPOOF_2018_ARP_H
 #define NWP_MYARPSPOOF_2018_ARP_H
 
@@ -37,7 +38,8 @@ typedef struct params_s {
 
 params_t *parse(int, char **);
 void delete_params(params_t *);
-void dump_broadcast_arp_packet(char *);
+void dump_broadcast_arp_packet(char *, int);
+void dump_broadcast_spoof_packet(char *, char *);
 
 // ----------------------- ARP packets
 #include <net/if_arp.h>
@@ -57,7 +59,7 @@ void dump_broadcast_arp_packet(char *);
 
 #define MACADDR_LEN 6
 #define IPV4_LEN 4
-#define PACKET_LEN 64
+#define PACKET_LEN 42
 
 typedef struct arp_hdr_s {
     uint16_t    hardware_type;
@@ -83,7 +85,8 @@ void delete_arp_packet(arp_hdr_t *);
 int create_socket(void);
 
 // ------------------------ Mac
-char *retrieve_mac_addr(char *, int);
+char *retrieve_mac_addr_as_sudo(char *, int);
+char *retrieve_mac_addr_as_user(char *);
 unsigned char *retrieve_mac_addr_from_frame(char *);
 void print_victim_mac_addr(unsigned char *);
 
@@ -91,6 +94,7 @@ void print_victim_mac_addr(unsigned char *);
 unsigned char *process_arp_spoofing(char *,
     struct sockaddr_ll *);
 void spoofing_loop(params_t *, char *, arp_hdr_t *);
+char *handle_print_spoof_flag(params_t *, char *, arp_hdr_t *);
 
 
 #endif //NWP_MYARPSPOOF_2018_ARP_H

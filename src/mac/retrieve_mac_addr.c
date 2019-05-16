@@ -8,7 +8,7 @@
 #include <net/if.h>
 #include "arp.h"
 
-char *retrieve_mac_addr(char *interface, int socket_fd)
+char *retrieve_mac_addr_as_sudo(char *interface, int socket_fd)
 {
     struct ifreq ifr;
     char *mac_addr = malloc(sizeof(char) * MACADDR_LEN);
@@ -16,6 +16,20 @@ char *retrieve_mac_addr(char *interface, int socket_fd)
     memset(&ifr, 0, sizeof(ifr));
     strcpy(ifr.ifr_name, interface);
     if (ioctl(socket_fd, SIOCGIFHWADDR, &ifr) < 0)
+       return NULL;
+    memcpy(mac_addr, ifr.ifr_hwaddr.sa_data, sizeof(uint8_t) * MACADDR_LEN);
+    return mac_addr;
+}
+
+char *retrieve_mac_addr_as_user(char *interface)
+{
+    struct ifreq ifr;
+    char *mac_addr = malloc(sizeof(char) * MACADDR_LEN);
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+
+    memset(&ifr, 0, sizeof(ifr));
+    strcpy(ifr.ifr_name, interface);
+    if (ioctl(sock, SIOCGIFHWADDR, &ifr) < 0)
         return NULL;
     memcpy(mac_addr, ifr.ifr_hwaddr.sa_data, sizeof(uint8_t) * MACADDR_LEN);
     return mac_addr;
