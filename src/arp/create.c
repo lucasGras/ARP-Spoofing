@@ -76,7 +76,7 @@ char *create_sendable_packet(arp_hdr_t *arp_hdr,
     uint32_t source_ip = inet_addr(params->source_ip);
 
     memset(eth_header->h_dest, 0xff, MACADDR_LEN);
-    memset(arp_header->target_mac, 0x00, MACADDR_LEN);
+    memset(arp_header->target_mac, 0xff, MACADDR_LEN);
     memcpy(eth_header->h_source, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_header->source_mac, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_sockaddr->sll_addr, arp_hdr->source_mac, MACADDR_LEN);
