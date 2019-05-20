@@ -49,6 +49,7 @@ void dump_broadcast_spoof_packet(char *, char *);
 #include <netinet/ip.h>
 #include <netpacket/packet.h>
 #include <linux/if_ether.h>
+#include <math.h>
 
 #define ETHHDR_LEN 14
 #define IP4HDR_LEN 20
@@ -81,6 +82,10 @@ char *create_spoofed_packet(arp_hdr_t *,
 struct sockaddr_ll *create_broadcast_arp_socketaddr(params_t *);
 struct sockaddr_ll *create_spoofed_arp_socketaddr(params_t *, char *);
 void delete_arp_packet(arp_hdr_t *);
+
+// ------------------------ Utils
+int hexadecimal_to_decimal(int);
+int getnbr(char const *str);
 
 // ----------------------- Socket
 int create_socket(void);

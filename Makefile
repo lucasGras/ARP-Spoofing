@@ -14,6 +14,7 @@ SRC		=		src/main.c \
 				src/socket/create.c \
 				src/socket/delete.c \
 				src/parser/dump.c \
+				src/parser/getnbr.c \
 
 OBJ		=		$(SRC:.c=.o)
 
@@ -24,7 +25,7 @@ NAME	=	myARPspoof
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-		gcc $(OBJ) -o $(NAME) -g3
+		gcc $(OBJ) -o $(NAME) -g3 -lm
 
 clean:
 	find -name '*.o' -delete

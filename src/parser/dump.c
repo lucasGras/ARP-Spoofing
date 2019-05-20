@@ -22,19 +22,21 @@ void dump_broadcast_arp_packet(char *packet, int i)
 
 void dump_broadcast_spoof_packet(char *packet, char *mac_addr)
 {
-    int j = 0;
+    (void)mac_addr;
+    dump_broadcast_arp_packet(packet, 0);
+}
+
+int hexadecimal_to_decimal(int x)
+{
+    int decimal_number = 0;
+    int remainder = 0;
     int count = 0;
 
-    while (mac_addr[j]) {
-        if (count == 2) {
-            count = 0;
-            j++;
-            printf(" ");
-        }
-        printf("%c", mac_addr[j]);
-        count ++;
-        j++;
+    while(x > 0) {
+        remainder = x % 10;
+        decimal_number = decimal_number + remainder * pow(16, count);
+        x = x / 10;
+        count++;
     }
-    printf(" ");
-    dump_broadcast_arp_packet(packet, 6);
+    return decimal_number;
 }
