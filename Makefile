@@ -25,7 +25,7 @@ NAME	=	myARPspoof
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-		gcc $(OBJ) -o $(NAME) -g3 -lm
+		gcc $(OBJ) -o $(NAME) -lm
 
 clean:
 	find -name '*.o' -delete
