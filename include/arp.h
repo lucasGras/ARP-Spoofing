@@ -55,7 +55,8 @@ void dump_broadcast_spoof_packet(char *, char *);
 #define ARPHDR_LEN 28
 #define ETH_TYPE 1
 #define IPV4_TYPE 2048
-#define ARP_OPCODE 1
+#define ARP_OPCODE_BROADCAST 1
+#define ARP_OPCODE_SPOOFED 2
 
 #define MACADDR_LEN 6
 #define IPV4_LEN 4

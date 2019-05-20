@@ -32,7 +32,10 @@ arp_hdr_t *create_arp_packet(params_t *params, int socket_fd)
     arp_hdr->hardware_len = MACADDR_LEN;
     arp_hdr->protocol_type = htons(IPV4_TYPE);
     arp_hdr->protocol_len = IPV4_LEN;
-    arp_hdr->opcode = htons(ARP_OPCODE);
+    if (params->print_spoof_mac_addr)
+        arp_hdr->opcode = htons(ARP_OPCODE_SPOOFED);
+    else
+        arp_hdr->opcode = htons(ARP_OPCODE_BROADCAST);
     return arp_hdr;
 }
 
