@@ -32,7 +32,7 @@ int hexadecimal_to_decimal(int x)
     int remainder = 0;
     int count = 0;
 
-    while(x > 0) {
+    while (x > 0) {
         remainder = x % 10;
         decimal_number = decimal_number + remainder * pow(16, count);
         x = x / 10;
