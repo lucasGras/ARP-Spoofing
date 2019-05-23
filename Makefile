@@ -9,6 +9,7 @@ SRC		=		src/main.c \
 				src/spoofing.c \
 				src/parser/parser.c \
 				src/arp/create.c \
+				src/arp/create_sendable.c \
 				src/arp/delete.c \
 				src/mac/retrieve_mac_addr.c \
 				src/socket/create.c \

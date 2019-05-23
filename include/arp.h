@@ -82,6 +82,10 @@ char *create_spoofed_packet(arp_hdr_t *,
 struct sockaddr_ll *create_broadcast_arp_socketaddr(params_t *);
 struct sockaddr_ll *create_spoofed_arp_socketaddr(params_t *, char *);
 void delete_arp_packet(arp_hdr_t *);
+char *create_sendable_packet(arp_hdr_t *,
+    struct sockaddr_ll *, params_t *);
+char *create_spoofed_packet(arp_hdr_t *,
+    struct sockaddr_ll *, params_t *, char *);
 
 // ------------------------ Utils
 int hexadecimal_to_decimal(int);
