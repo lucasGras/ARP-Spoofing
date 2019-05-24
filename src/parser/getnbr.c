@@ -51,5 +51,3 @@ int getnbr(char const *str)
         nb *= -1;
     return nb;
 }
-
-
